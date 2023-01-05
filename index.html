@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+    <head>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css">
+        <link href="css/mediaqueries.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript">
+
+            var id_activo = null;
+            var id_lista = 0;
+            const lista = [];
+
+            function crearElemento(valor)
+            {
+                var contenedor = document.getElementById("cinta");
+                var img = document.createElement("img");
+                img.src = "https://picsum.photos/1280/720.jpg?random=" + valor;
+                img.id = "img_" + valor;
+                img.className = "mini";
+                lista.push(img.id);
+
+                var a = document.createElement("a");
+                a.href = "javascript:siguiente(" + valor + ");";
+                a.append(img);
+                contenedor.append(a);
+
+            }
+
+            function siguiente(pos)
+            {
+                console.log(pos);
+                id_lista = pos;
+                var id_img = lista[pos];
+
+                var visor = document.getElementById("visor");
+                var tmp_img = document.getElementById(id_img)
+                tmp_img.setAttribute("class", "borde mini");
+
+                if (id_activo != null)
+                {
+                    document.getElementById(id_activo).setAttribute("class", "mini");
+                }
+
+                id_activo = id_img;
+
+                visor.src = tmp_img.getAttribute("src");
+            }
+
+            function cambio(direccion)
+            {
+                console.log(id_lista);
+                if (direccion == 'L')
+                {
+                    if (id_lista > 0)
+                    {
+                        siguiente(id_lista - 1);
+                    }
+                }
+
+                if (direccion == 'R')
+                {
+                    if (id_lista < (lista.length-1) )
+                    {
+                        siguiente(id_lista + 1);
+                    } else {
+                        crearElemento(lista.length);
+                        id_lista = lista.length - 1;
+                        siguiente(id_lista);
+                    }
+                }
+            }
+
+            var desp_val = 0;
+            function desplazamiento(orientacion)
+            {
+                var cintillo = document.getElementById("cinta");
+
+                if (orientacion == 'B')
+                {
+                    desp_val -= 2;
+                    if (desp_val > -10)
+                    {
+                        cintillo.style = "transform: translateY(" + desp_val + "%);";
+                    } else {
+                        desp_val = -10;
+                    }
+                }
+
+                if (orientacion == 'T')
+                {
+                    desp_val += 2;
+                    if (desp_val < 2)
+                    {
+                        cintillo.style = "transform: translateY(" + desp_val + "%);";
+                    } else {
+                        desp_val = 2;
+                    }
+                }
+
+                if (orientacion == 'R')
+                {
+                    desp_val -= 2;
+                    if (desp_val > -58)
+                    {
+                        cintillo.style = "transform: translateX(" + desp_val + "%);";
+                    } else {
+                        desp_val = -58;
+                    }
+                }
+
+                if (orientacion == 'L')
+                {
+                    desp_val += 2;
+                    if (desp_val < 2)
+                    {
+                        cintillo.style = "transform: translateX(" + desp_val + "%);";
+                    } else {
+                        desp_val = 2;
+                    }
+                }
+
+            }
+
+            window.onload = function()
+            {
+
+                for (i = 0; i < 20; i = i + 1)
+                {
+
+                    /*var img = document.createElement("img");
+                    img.src = "https://picsum.photos/1280/720.jpg?random=" + i;
+                    img.id = "img_" + i;
+                    img.className = "mini";
+                    lista.push(img.id);
+
+                    var a = document.createElement("a");
+                    a.href = "javascript:siguiente(" + i + ");";
+                    a.append(img);
+                    contenedor.append(a);*/
+
+                    crearElemento(i);
+
+                    if (i == 0)
+                    {
+                        siguiente(0);
+                    }
+                }
+
+                var modal = document.getElementById("modal");
+                var imagen = document.getElementById("visor_imagen");
+                var span = document.getElementsByClassName("cerrar")[0];
+
+                imagen.addEventListener("click",function() {
+
+                    var visor = document.getElementById("img_completa");
+
+                    //id_lista = pos;
+                    var id_img = lista[id_lista];
+                    var tmp_img = document.getElementById(id_img)
+                    var src = tmp_img.getAttribute("src");
+                    visor.src = src;
+
+                    modal.style.display = "block";
+                });
+                span.addEventListener("click",function() {
+                    modal.style.display = "none";
+                });
+                window.addEventListener("click",function(event) {
+                    if (event.target == modal) {
+                      modal.style.display = "none";
+                    }
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <div class="titulo"> GALERIA DE IMAGENES (Ejemplo 5) </div>
+        <div class="pantalla">
+            <div class="muestra">
+                <div id="atras">
+                    <img src="img/anterior1.png" class="flechas" onclick="javascript:cambio('L');">
+                </div>
+                <div class="visor_imagen" id="visor_imagen">
+                    <img src = "" id="visor">
+                </div>
+                <div id="siguiente">
+                    <img src="img/siguiente1.png" class="flechas" onclick="javascript:cambio('R');">
+                </div>
+            </div>
+            
+        </div>
+        <div id="galeria" class="galeria">
+            <div class="cintillo">
+                <div id="arriba_galeria">
+                    <img src="img/arriba.png" class="flechas_vertical" on onmousemove="javascript:desplazamiento('T');">
+                </div>
+                <div id="atras_galeria">
+                    <img src="img/anterior1.png" class="flechas" on onmousemove="javascript:desplazamiento('L');">
+                </div>
+                <div id="cinta" class="cinta"></div>
+                <div id="siguiente_galeria">
+                    <img src="img/siguiente1.png" class="flechas" onmousemove="javascript:desplazamiento('R');">
+                </div>
+                <div id="abajo_galeria">
+                    <img src="img/abajo.png" class="flechas_vertical" on onmousemove="javascript:desplazamiento('B');">
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="modal">
+            <span class="cerrar">&times;</span>
+            <img src = "" class = "img_completa" id="img_completa">
+        </div>
+        <script src="js/scripts.js" type="text/javascript"></script>
+    </body>
+</html>
